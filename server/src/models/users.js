@@ -9,7 +9,6 @@ const schema = mongoose.Schema({
     default: 'user',
   },
   balance: { type: String, default: '0' },
-  //subscriptionId: mongoose.Schema.Types.ObjectId,
   isVerified: { type: Boolean, default: false },
   urlVeri: String,
   passwToken: { type: String, default: '' },

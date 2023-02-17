@@ -6,12 +6,11 @@ const jwt = require('jsonwebtoken');
 // Models
 const User = require('../models/users');
 
-// const Subscription = require('../models/subscriptions');
 const Session = require('../models/sessions');
 
 class UserController {
   /**
-   * Login into MK.
+   * Login into grassServices.
    *
    * @param {object} formData Login Information
    * @returns {object} Login Result
@@ -36,18 +35,22 @@ class UserController {
   }
 
   /**
-   * Register user into MK.
+   * Register user into GrassServices.
    *
    * @param {object} formData User Information
    * @returns {object} Register Result
    */
+   
+
   static async register(formData) {
+   
+    console.log("FORMADATA", formData) 
     let user = await User.findOne(
       { email: formData.email },
     );
     if (user) throw (new Error('Invalid email '));
     else {
-      const isTest = (formData.email.includes('$mk.com'));
+      const isTest = (formData.email.includes('$gs.com'));
       user = new User(formData);
       user.password = md5(user.password);
       const urlVeriToken = jwt.sign({ user: user.email.toString() }, process.env.TOKEN_SECRET);
@@ -89,6 +92,7 @@ class UserController {
       return (obj);
     }
   }
+  
 
   /**
    * send email for password update
@@ -141,13 +145,6 @@ class UserController {
     if (!user) throw (new Error('Invalid userId'));
     const obj = JSON.parse(JSON.stringify(user));
     delete obj.password;
-    // Add subscription
-    // let subscription = null;
-    // if (!!user.subscriptionId) {
-    //   subscription = await Subscription.findOne({ _id: user.subscriptionId });
-    //   if (!subscription) throw (new Error('Subscription not found'));
-    // }
-    // obj.subscription = subscription;
     return (obj);
   }
 
@@ -198,37 +195,6 @@ class UserController {
     delete obj.password;
 
     return (obj);
-  }
-
-  /**
-   * Get available networks by user
-   *
-   * @param {string} userId - User Id
-   * @returns {array} networks (array of objects)
-   */
-  static async getNetworks(userId) {
-    let networks = [];
-    const use = await User.findOne({ _id: userId });
-    if (!use) throw (new Error('Invalid userId'));
-
-    const mumbai = { code: 'mumbai', name: 'Mumbai (testnet)' };
-    const polygon = { code: 'polygon', name: 'Polygon' };
-    const etherum = { code: 'etherum', name: 'Etherum' };
-
-    switch (use.membership) {
-      case 'free':
-        networks = [mumbai, polygon, etherum];
-        break;
-      case 'basic':
-        networks = [mumbai, polygon, etherum];
-        break;
-      case 'pro':
-        networks = [mumbai, polygon, etherum];
-        break;
-      default:
-        networks = [mumbai];
-    }
-    return (networks);
   }
 }
 

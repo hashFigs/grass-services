@@ -1,4 +1,4 @@
-// const express = require('express');
+const express = require('express');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const User = require('../models/users');
@@ -16,9 +16,6 @@ const userProtected = (params) => {
         switch (origin) {
           case 'http://localhost:3000':
           case 'http://localhost:3001':
-          case 'https://nfteer.dev.mintknight.com':
-          case 'https://nfteer.sandbox.mintknight.com':
-          case 'https://nfteer.mintknight.com':
             return next();
           default:
             break;
@@ -48,9 +45,9 @@ const userProtected = (params) => {
         req.context.user = await User.findOne({ _id: session.userId });
         // console.log(7);
         
-   //     if (!req.context.user) return res.status(401).send();
+        if (!req.context.user) return res.status(401).send();
    //     req.context.company = await Company.findOne({ _id: req.context.user.companyId });
-        if (!!decoded.projectId) {
+    //    if (!!decoded.projectId) {
    //       if (!req.context.company) return res.status(401).send();
    //       req.context.project = await Project.findOne({
    //         _id: mongoose.Types.ObjectId(decoded.projectId),
@@ -60,7 +57,7 @@ const userProtected = (params) => {
    //       if (!req.context.project) return res.status(401).send();
           // User from different company.
   //        if (req.context.project.companyId.toString() !== req.context.company._id.toString()) return res.status(401).send();
-        }
+   //     }
         return next();
       });
     } else {
